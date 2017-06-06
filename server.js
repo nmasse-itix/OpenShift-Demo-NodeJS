@@ -20,7 +20,7 @@ router.get("/info",function(req,res){
     podName: process.env["HOSTNAME"],
   };
   res.type('application/json')
-     .set("Connection", "close")
+     .header("Connection", "close")
      .header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
      .header('Expires', '-1')
      .header('Pragma', 'no-cache')
