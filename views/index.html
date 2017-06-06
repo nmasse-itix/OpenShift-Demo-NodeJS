@@ -37,7 +37,11 @@
 	</style>
     <script type="text/javascript">
     $().ready(function() {
-      $.get("/info", function(data) {
+      $.ajax("/info", {
+        headers: {
+          'x-random': + new Date() // timestamp
+        }
+      }).done(function(data) {
         if (data.podName) {
           $("#pod-name").text(data.podName);
         }
