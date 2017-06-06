@@ -21,6 +21,9 @@ router.get("/info",function(req,res){
   };
   res.type('application/json')
      .set("Connection", "close")
+     .header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
+     .header('Expires', '-1')
+     .header('Pragma', 'no-cache')
      .send(JSON.stringify(response))
      .end();
 });
