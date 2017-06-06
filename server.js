@@ -19,7 +19,10 @@ router.get("/info",function(req,res){
     color: color,
     podName: process.env["HOSTNAME"],
   };
-  res.type('application/json').send(JSON.stringify(response));
+  res.type('application/json')
+     .set("Connection", "close")
+     .send(JSON.stringify(response))
+     .end();
 });
 
 
