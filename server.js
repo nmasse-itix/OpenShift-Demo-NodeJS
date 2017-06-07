@@ -3,7 +3,8 @@ var app = express();
 var router = express.Router();
 var port = 8080;
 
-var color = "red";
+// See https://www.w3schools.com/cssref/css_colors.asp
+var color = "Chartreuse";
 
 router.use(function (req,res,next) {
   next();
