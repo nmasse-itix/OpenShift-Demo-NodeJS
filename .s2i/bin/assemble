@@ -19,6 +19,12 @@ echo "---> Generating symlinks ..."
 for file in node_modules/$package_name/*; do
   from="$file"
   to="$(basename "$file")"
+
+  # Avoid recursive loops
+  if [ "$to" == "node_modules" ]; then
+    continue
+  fi
+
   echo " - $from => $to"
   ln -s "$from" "$to"
 done
