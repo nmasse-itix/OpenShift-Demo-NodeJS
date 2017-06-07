@@ -1,8 +1,9 @@
 #!/bin/bash
 
 if [ -z "$NPM_PACKAGE_TO_INSTALL" ]; then
-  echo "Error: NPM_PACKAGE_TO_INSTALL is not defined"
-  exit 1
+  echo "Warning: NPM_PACKAGE_TO_INSTALL is not defined !"
+  echo "Switching back to the default S2I behavior"
+  exec "$STI_SCRIPTS_PATH/assemble"
 fi
 
 # Exit on any error
