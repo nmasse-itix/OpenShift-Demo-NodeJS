@@ -15,7 +15,9 @@ npm install "$NPM_PACKAGE_TO_INSTALL"
 # Trim package name (remove the version number)
 package_name="${NPM_PACKAGE_TO_INSTALL%@*}"
 
-echo "---> Linking application ..."
-ln -s "node_modules/$package_name" main
+echo "---> Generating symlinks ..."
+for file in node_modules/$package_name/*; do
+  ln -s "$file" "$(basename "$file")"
+done
 
 fix-permissions ./
