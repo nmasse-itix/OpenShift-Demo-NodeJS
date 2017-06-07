@@ -15,4 +15,5 @@ fi
 # Run NodeJS Server
 echo "Running NodeJS Server..."
 export NODE_ENV=production
+cd main
 run_node
