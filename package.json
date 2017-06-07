@@ -1,5 +1,5 @@
 {
-  "name": "openshift-demo-nodejs-front",
+  "name": "openshift-demo-nodejs-nmasse",
   "version": "0.1.0",
   "description": "An OpenShift Demo app running on NodeJS",
   "main": "server.js",
