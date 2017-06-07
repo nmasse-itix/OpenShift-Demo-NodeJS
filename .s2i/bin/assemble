@@ -17,7 +17,10 @@ package_name="${NPM_PACKAGE_TO_INSTALL%@*}"
 
 echo "---> Generating symlinks ..."
 for file in node_modules/$package_name/*; do
-  ln -s "$file" "$(basename "$file")"
+  from="$file"
+  to="$(basename "$file")"
+  echo " - $from => $to"
+  ln -s "$from" "$to"
 done
 
 fix-permissions ./
