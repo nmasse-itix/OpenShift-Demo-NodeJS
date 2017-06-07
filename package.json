@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nicolas MASSE",
+  "repository": "https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git",
   "license": "MIT",
   "dependencies": {
     "express": "latest"
