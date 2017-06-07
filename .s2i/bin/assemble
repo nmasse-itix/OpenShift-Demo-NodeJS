@@ -15,6 +15,6 @@ npm install "$NPM_PACKAGE_TO_INSTALL"
 package_name="${NPM_PACKAGE_TO_INSTALL%@*}"
 
 echo "---> Linking application ..."
-ln -l "node_modules/$package_name" main
+ln -s "node_modules/$package_name" main
 
 fix-permissions ./
