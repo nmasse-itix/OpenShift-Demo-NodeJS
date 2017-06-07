@@ -1,6 +1,6 @@
 {
   "name": "openshift-demo-nodejs-front",
-  "version": "0.1.3-0",
+  "version": "0.1.0",
   "description": "An OpenShift Demo app running on NodeJS",
   "main": "server.js",
   "scripts": {
