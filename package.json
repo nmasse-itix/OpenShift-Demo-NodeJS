@@ -4,7 +4,7 @@
   "description": "An OpenShift Demo app running on NodeJS",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./tests/run-integration-tests.sh"
   },
   "author": "Nicolas MASSE",
   "repository": "https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git",
