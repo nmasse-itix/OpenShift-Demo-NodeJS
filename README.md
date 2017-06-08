@@ -131,6 +131,7 @@ Create a Jenkins Credentials with the following parameters :
  - ID: npm-secret
 
 Create a Jenkins Pipeline that accepts the following parameters :
+
 | Parameter Name | Parameter Type | Default Value | Description |
 | --- | --- | --- | --- |
 | NPM_CREDENTIALS_ID | String | npm-secret | The Jenkins Credentials ID that holds login and password to login on NPM Registry |
