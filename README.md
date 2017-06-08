@@ -126,8 +126,8 @@ oc set triggers dc/openshift-demo-nodejs-green --from-image=demo-build/openshift
 Create a Jenkins Credentials with the following parameters :
  - Scope: global
  - Kind: Username with password
- - Username: <your NPM username>
- - Password: <your NPM password>
+ - Username: \<your NPM username\>
+ - Password: \<your NPM password\>
  - ID: npm-secret
 
 Create a Jenkins Pipeline that accepts the following parameters :
@@ -135,7 +135,7 @@ Create a Jenkins Pipeline that accepts the following parameters :
 | Parameter Name | Parameter Type | Default Value | Description |
 | --- | --- | --- | --- |
 | NPM_CREDENTIALS_ID | String | npm-secret | The Jenkins Credentials ID that holds login and password to login on NPM Registry |
-| NPM_EMAIL | String | <your NPM email> | The email address associated with the NPM Account pointed by NPM_CREDENTIALS_ID |
+| NPM_EMAIL | String | \<your NPM email\> | The email address associated with the NPM Account pointed by NPM_CREDENTIALS_ID |
 | NPM_REGISTRY | String | https://registry.npmjs.org | Private NPM registry to log in to (Default if not provided: https://registry.npmjs.org) |
 | OPENSHIFT_IMAGE_STREAM | String | openshift-demo-nodejs | The ImageStream name to use to tag the built images |
 | OPENSHIFT_BUILD_CONFIG | String | openshift-demo-nodejs | The BuildConfig name to use |
