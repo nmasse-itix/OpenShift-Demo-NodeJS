@@ -32,16 +32,20 @@ Where parameters are :
 
 | Parameter Name | Required ? | Default Value | Description |
 | --- | --- | --- | --- |
-| DEV_PROJECT | No | demo-dev | TODO |
-| BUILD_PROJECT | No | demo-build | TODO |
-| TEST_PROJECT | No | demo-test | TODO |
-| PROD_PROJECT | No | demo-prod | TODO |
-
-TODO
+| TEST_ROUTE_HOSTNAME | Yes | - | The route to create in the TEST environment and which we will use to run the integration tests |
+| PROD_ROUTE_HOSTNAME | Yes | - | The route to create in the PROD environment |
+| NPM_EMAIL | Yes | - | Email address of your NPM Account |
+| NPM_CREDENTIALS_ID | No | npm-secret | The Jenkins Credentials ID that holds login and password to login on NPM Registry |
+| NPM_REGISTRY | No | https://registry.npmjs.org | Private NPM registry to log in to |
+| GIT_REPO | No | https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git | The GIT repository to use. This will be useful if you clone this repo. |
+| NODEJS_IMAGE_STREAM_TAG | No | nodejs:latest | Name of the ImageStreamTag to be used for the NodeJS image. Change this if you plan to use your own NodeJS S2I image. |
+| NODEJS_IMAGE_STREAM_NAMESPACE | No | openshift | The OpenShift Namespace where the NodeJS ImageStream resides. |
+| DEV_PROJECT | No | demo-dev | The name of the OpenShift Project to that holds the dev environment |
+| BUILD_PROJECT | No | demo-build | The name of the OpenShift Project to that holds the build environment |
+| TEST_PROJECT | No | demo-test | The name of the OpenShift Project to that holds the test environment |
+| PROD_PROJECT | No | demo-prod | The name of the OpenShift Project to that holds the prod environment |
 
 ## Manual Setup
-
-### Prepare OpenShift
 
 Create the four environments :
 ```
@@ -142,6 +146,4 @@ oc set triggers dc/openshift-demo-nodejs-blue --from-image=demo-build/openshift-
 oc set triggers dc/openshift-demo-nodejs-green --from-image=demo-build/openshift-demo-nodejs:ready-for-prod --manual=true -c openshift-demo-nodejs-green -n demo-prod
 ```
 
-### Create the Jenkins Pipeline
-
-Configure Jenkins [as described here](CONFIGURE_JENKINS.md).
+Then, configure Jenkins [as described here](CONFIGURE_JENKINS.md).
