@@ -121,7 +121,7 @@ objects:
           - name: OPENSHIFT_PROD_ENVIRONMENT
             value: ${PROD_PROJECT}
           - name: OPENSHIFT_TEST_URL
-            value: http://${TEST_APP_ROUTE}
+            value: http://${TEST_ROUTE_HOSTNAME}
 
 ##
 ## Deploy to the TEST environment
@@ -208,7 +208,7 @@ objects:
     name: openshift-demo-nodejs
     namespace: ${TEST_PROJECT}
   spec:
-    host: ${TEST_APP_ROUTE}
+    host: ${TEST_ROUTE_HOSTNAME}
     port:
       targetPort: 8080-tcp
     to:
@@ -254,6 +254,199 @@ objects:
   - system:serviceaccount:${BUILD_PROJECT}:jenkins
 
 ##
+## Deploy to the PROD environment
+##
+
+# Blue Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: openshift-demo-nodejs-blue
+      color: blue
+    name: openshift-demo-nodejs-blue
+    namespace: ${PROD_PROJECT}
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: openshift-demo-nodejs-blue
+      color: blue
+      deploymentconfig: openshift-demo-nodejs-blue
+    sessionAffinity: None
+    type: ClusterIP
+
+# Green Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: openshift-demo-nodejs-green
+      color: green
+    name: openshift-demo-nodejs-green
+    namespace: ${PROD_PROJECT}
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: openshift-demo-nodejs-green
+      color: green
+      deploymentconfig: openshift-demo-nodejs-green
+    sessionAffinity: None
+    type: ClusterIP
+
+# Either blue or green Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${PROD_PROJECT}
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      color: green
+    sessionAffinity: None
+    type: ClusterIP
+
+# The route for the "either blue or green" service
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/balance: "roundrobin"
+      haproxy.router.openshift.io/disable_cookies: "true"
+    labels:
+      app: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${PROD_PROJECT}
+  spec:
+    host: ${PROD_ROUTE_HOSTNAME}
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: openshift-demo-nodejs
+      weight: 100
+    wildcardPolicy: None
+
+# The "blue" DeploymentConfig
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: openshift-demo-nodejs-blue
+      color: blue
+    name: openshift-demo-nodejs-blue
+    namespace: ${PROD_PROJECT}
+  spec:
+    replicas: 1
+    selector:
+      app: openshift-demo-nodejs-blue
+      color: blue
+      deploymentconfig: openshift-demo-nodejs-blue
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: openshift-demo-nodejs-blue
+          color: blue
+          deploymentconfig: openshift-demo-nodejs-blue
+      spec:
+        containers:
+        - image: openshift-demo-nodejs:ready-for-prod
+          imagePullPolicy: IfNotPresent
+          name: openshift-demo-nodejs-blue
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        containerNames:
+        - openshift-demo-nodejs-blue
+        from:
+          kind: ImageStreamTag
+          name: openshift-demo-nodejs:ready-for-prod
+          namespace: ${PROD_PROJECT}
+
+# The "green" DeploymentConfig
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: openshift-demo-nodejs-green
+      color: green
+    name: openshift-demo-nodejs-green
+    namespace: ${PROD_PROJECT}
+  spec:
+    replicas: 1
+    selector:
+      app: openshift-demo-nodejs-green
+      color: green
+      deploymentconfig: openshift-demo-nodejs-green
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: openshift-demo-nodejs-green
+          color: green
+          deploymentconfig: openshift-demo-nodejs-green
+      spec:
+        containers:
+        - image: openshift-demo-nodejs:ready-for-prod
+          imagePullPolicy: IfNotPresent
+          name: openshift-demo-nodejs-green
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        containerNames:
+        - openshift-demo-nodejs-green
+        from:
+          kind: ImageStreamTag
+          name: openshift-demo-nodejs:ready-for-prod
+          namespace: ${PROD_PROJECT}
+
+
+##
 ## Template Parameters
 ##
 parameters:
@@ -261,43 +454,58 @@ parameters:
   displayName: Development Environment
   name: DEV_PROJECT
   value: xyz-dev
+
 - description: The name of the OpenShift Projects to that holds the build environment.
   displayName: Build Environment
   name: BUILD_PROJECT
   value: xyz-build
+
 - description: The name of the OpenShift Projects to that holds the test environment.
   displayName: Test Environment
   name: TEST_PROJECT
   value: xyz-test
+
 - description: The name of the OpenShift Projects to that holds the prod environment.
   displayName: Production Environment
   name: PROD_PROJECT
   value: xyz-prod
+
 - description: The GIT repository to use.
   displayName: GIT Repo URL
   name: GIT_REPO
   value: https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git
+
 - description: The OpenShift Namespace where the NodeJS ImageStream resides.
   displayName: NodeJS ImageStream Namespace
   name: NODEJS_IMAGE_STREAM_NAMESPACE
   value: openshift
+
 - description: Name of the ImageStreamTag to be used for the NodeJS image.
   displayName: NodeJS ImageStreamTag
   name: NODEJS_IMAGE_STREAM_TAG
   value: nodejs:latest
+
 - description: The Jenkins Credentials ID that holds login and password to login on NPM Registry
   displayName: Jenkins Credentials ID for NPM Registry
   name: NPM_CREDENTIALS_ID
   value: npm-secret
+
 - description: The email address associated with the NPM Account pointed by NPM_CREDENTIALS_ID
   displayName: Email address of your NPM Account
   name: NPM_EMAIL
   required: true
+
 - description: Private NPM registry to log in to
   displayName: NPM Registry URL
   name: NPM_REGISTRY
   value: https://registry.npmjs.org
-- description: Application Hostname in the test environment
-  displayName: The route to create in the test environment and which we will use to run the integration tests
-  name: TEST_APP_ROUTE
+
+- description: The route to create in the TEST environment and which we will use to run the integration tests
+  displayName: Application Hostname in the TEST environment
+  name: TEST_ROUTE_HOSTNAME
+  required: true
+
+- description: The route to create in the PROD environment
+  displayName: Application Hostname in the PROD environment
+  name: PROD_ROUTE_HOSTNAME
   required: true
