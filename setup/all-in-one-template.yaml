@@ -1,0 +1,303 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: openshift-demo-nodejs
+message: TODO
+metadata:
+  annotations:
+    description: |-
+      TODO
+      NOTE: You must have persistent volumes available in your cluster to use this template.
+    openshift.io/display-name: OpenShift Demo NodeJS
+    tags: instant-app,nodejs,jenkins
+    template.openshift.io/documentation-url: https://github.com/nmasse-itix/OpenShift-Demo-NodeJS
+    template.openshift.io/long-description: A demo using NodeJS and Jenkins, running on OpenShift
+    template.openshift.io/provider-display-name: Nicolas Massé
+    template.openshift.io/support-url: https://github.com/nmasse-itix/OpenShift-Demo-NodeJS/issues
+  name: openshift-demo-nodejs-build
+objects:
+##
+## The ImageStreams for all environments
+##
+
+# BUILD Environment
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${BUILD_PROJECT}
+
+# TEST Environment
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${TEST_PROJECT}
+
+# PROD Environment
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${PROD_PROJECT}
+
+##
+## Build Objects
+##
+
+# The BuildConfig that generates the target image
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: openshift-demo-nodejs
+    labels:
+      build: openshift-demo-nodejs
+    namespace: ${BUILD_PROJECT}
+  spec:
+    successfulBuildsHistoryLimit: 1
+    failedBuildsHistoryLimit: 1
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: openshift-demo-nodejs:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: ${GIT_REPO}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: ${NODEJS_IMAGE_STREAM_TAG}
+          namespace: ${NODEJS_IMAGE_STREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+
+# The Jenkins Pipeline
+- kind: "BuildConfig"
+  apiVersion: "v1"
+  metadata:
+    name: "openshift-demo-nodejs-pipeline"
+    namespace: ${BUILD_PROJECT}
+  spec:
+    source:
+      git:
+        uri: ${GIT_REPO}
+    strategy:
+      type: "JenkinsPipeline"
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: Jenkinsfile
+        env:
+          - name: NPM_CREDENTIALS_ID
+            value: ${NPM_CREDENTIALS_ID}
+          - name: NPM_EMAIL
+            value: ${NPM_EMAIL}
+          - name: NPM_REGISTRY
+            value: ${NPM_REGISTRY}
+          - name: OPENSHIFT_IMAGE_STREAM
+            value: openshift-demo-nodejs
+          - name: OPENSHIFT_BUILD_CONFIG
+            value: openshift-demo-nodejs
+          - name: OPENSHIFT_SERVICE
+            value: openshift-demo-nodejs
+          - name: OPENSHIFT_DEPLOYMENT_CONFIG
+            value: openshift-demo-nodejs
+          - name: OPENSHIFT_BUILD_PROJECT
+            value: ${BUILD_PROJECT}
+          - name: OPENSHIFT_TEST_ENVIRONMENT
+            value: ${TEST_PROJECT}
+          - name: OPENSHIFT_PROD_ENVIRONMENT
+            value: ${PROD_PROJECT}
+          - name: OPENSHIFT_TEST_URL
+            value: http://${TEST_APP_ROUTE}
+
+##
+## Deploy to the TEST environment
+##
+
+# DeploymentConfig/TEST
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${TEST_PROJECT}
+  spec:
+    replicas: 1
+    selector:
+      app: openshift-demo-nodejs
+      deploymentconfig: openshift-demo-nodejs
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: openshift-demo-nodejs
+          deploymentconfig: openshift-demo-nodejs
+      spec:
+        containers:
+        - image: openshift-demo-nodejs:ready-for-testing
+          imagePullPolicy: IfNotPresent
+          name: openshift-demo-nodejs
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        containerNames:
+        - openshift-demo-nodejs
+        from:
+          kind: ImageStreamTag
+          name: openshift-demo-nodejs:ready-for-testing
+          namespace: ${TEST_PROJECT}
+
+# Service/TEST
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${TEST_PROJECT}
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: openshift-demo-nodejs
+      deploymentconfig: openshift-demo-nodejs
+    sessionAffinity: None
+    type: ClusterIP
+
+# Route/TEST
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/balance: "roundrobin"
+      haproxy.router.openshift.io/disable_cookies: "true"
+    labels:
+      app: openshift-demo-nodejs
+    name: openshift-demo-nodejs
+    namespace: ${TEST_PROJECT}
+  spec:
+    host: ${TEST_APP_ROUTE}
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: openshift-demo-nodejs
+      weight: 100
+    wildcardPolicy: None
+
+##
+## RoleBinding
+##
+
+# Set RoleBinding for the test environment
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    name: jenkins-is-admin
+    namespace: ${TEST_PROJECT}
+  roleRef:
+    name: admin
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: ${BUILD_PROJECT}
+  userNames:
+  - system:serviceaccount:${BUILD_PROJECT}:jenkins
+
+# Set RoleBinding for the prod environment
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    name: jenkins-is-admin
+    namespace: ${PROD_PROJECT}
+  roleRef:
+    name: admin
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: ${BUILD_PROJECT}
+  userNames:
+  - system:serviceaccount:${BUILD_PROJECT}:jenkins
+
+##
+## Template Parameters
+##
+parameters:
+- description: The name of the OpenShift Projects to that holds the dev environment.
+  displayName: Development Environment
+  name: DEV_PROJECT
+  value: xyz-dev
+- description: The name of the OpenShift Projects to that holds the build environment.
+  displayName: Build Environment
+  name: BUILD_PROJECT
+  value: xyz-build
+- description: The name of the OpenShift Projects to that holds the test environment.
+  displayName: Test Environment
+  name: TEST_PROJECT
+  value: xyz-test
+- description: The name of the OpenShift Projects to that holds the prod environment.
+  displayName: Production Environment
+  name: PROD_PROJECT
+  value: xyz-prod
+- description: The GIT repository to use.
+  displayName: GIT Repo URL
+  name: GIT_REPO
+  value: https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git
+- description: The OpenShift Namespace where the NodeJS ImageStream resides.
+  displayName: NodeJS ImageStream Namespace
+  name: NODEJS_IMAGE_STREAM_NAMESPACE
+  value: openshift
+- description: Name of the ImageStreamTag to be used for the NodeJS image.
+  displayName: NodeJS ImageStreamTag
+  name: NODEJS_IMAGE_STREAM_TAG
+  value: nodejs:latest
+- description: The Jenkins Credentials ID that holds login and password to login on NPM Registry
+  displayName: Jenkins Credentials ID for NPM Registry
+  name: NPM_CREDENTIALS_ID
+  value: npm-secret
+- description: The email address associated with the NPM Account pointed by NPM_CREDENTIALS_ID
+  displayName: Email address of your NPM Account
+  name: NPM_EMAIL
+  required: true
+- description: Private NPM registry to log in to
+  displayName: NPM Registry URL
+  name: NPM_REGISTRY
+  value: https://registry.npmjs.org
+- description: Application Hostname in the test environment
+  displayName: The route to create in the test environment and which we will use to run the integration tests
+  name: TEST_APP_ROUTE
+  required: true
