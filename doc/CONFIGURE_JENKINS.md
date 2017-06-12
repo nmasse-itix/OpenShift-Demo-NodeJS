@@ -1,8 +1,8 @@
 # Configure Jenkins
 
-## Create a Credentials named `npm-secret`
+## Create a credential named `npm-secret`
 
-Login to Jenkins with your OpenShift credentials and create a Jenkins Credentials with the following parameters :
+Login to Jenkins with your OpenShift credentials and create a Jenkins credential with the following parameters :
  - Scope: global
  - Kind: Username with password
  - Username: \<your NPM username\>
@@ -40,19 +40,20 @@ Note: to update a plugin, select the `Updates` tab instead of the `Available` ta
 ## Create the Jenkins Pipeline
 
 Depending if you created a JenkinsPipeline BuildConfig, OpenShift may have created
-a Jenkins pipeline for you. In such a case, the Jenkins Pipeline is named `\<namespace\>/\<buildconfig-name\>`.
+a Jenkins pipeline for you. In such a case, the Jenkins Pipeline is named `<namespace>/<buildconfig-name>`.
 
 So, if you installed the demo :
  - manually, you need to create the pipeline from scratch
  - automatically, you need to update the pipeline to add the following parameters
 
-Note: As of today, OpenShift does not accept build environment variables with Jenkins pipelines.
+__Note :__ As of today, OpenShift does not accept build environment variables with Jenkins pipelines.
 So you have to update the Jenkins pipeline created by OpenShift to add those variable.
 In the next version this may change as there is a pull request for this feature
 (see [\#11293](https://github.com/openshift/origin/issues/11293)
 and [\#12323](https://github.com/openshift/origin/pull/12323)).
 
-So, create or update a Jenkins Pipeline that accepts the following parameters :
+So, create a Jenkins Pipeline that accepts the following parameters or update
+the existing Jenkins Pipeline so that it accepts the following parameters :
 
 | Parameter Name | Parameter Type | Default Value | Description |
 | --- | --- | --- | --- |
@@ -68,8 +69,8 @@ So, create or update a Jenkins Pipeline that accepts the following parameters :
 | OPENSHIFT_PROD_ENVIRONMENT | String | demo-prod | The OpenShift project in which we will deploy the prod version |
 | OPENSHIFT_TEST_URL | String | http://demo.test.app.openshift.test | The App URL in the test environment (to run the integration tests) |
 
-Pick the pipeline from GIT using the option "Pipeline script from SCM" and the following parameters :
- - SCM: GIT
- - Script Path: Jenkinsfile
+Pick the pipeline from GIT using the option `Pipeline script from SCM` and the following parameters :
+ - SCM: `GIT`
+ - Script Path: `Jenkinsfile`
  - Repository URL: https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git
- - Branch Specifier: */master
+ - Branch Specifier: `*/master`

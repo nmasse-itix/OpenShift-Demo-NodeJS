@@ -1,4 +1,9 @@
-# Full CICD Setup
+# Full CI/CD Setup
+
+This section describe how to setup a complete CI/CD environment using Jenkins.
+You can either setup the environment :
+ - in a fully automated way, using OpenShift templates
+ - manually
 
 ## Automated setup through Templates
 
@@ -10,7 +15,7 @@ oc new-project demo-test
 oc new-project demo-prod
 ```
 
-Deploy a Jenkins in the build project :
+Deploy a Jenkins in the BUILD project :
 ```
 oc new-app -n demo-build --template=jenkins-persistent --name=jenkins -p MEMORY_LIMIT=1Gi
 ```
@@ -46,7 +51,7 @@ oc new-project demo-test
 oc new-project demo-prod
 ```
 
-Create the build config in the build environment :
+Create the build config in the BUILD environment :
 ```
 oc new-build -n demo-build nodejs~https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git --strategy=source --name=openshift-demo-nodejs
 ```
@@ -65,12 +70,6 @@ Give admin role to the jenkins service account on subsequent environments :
 ```
 oc adm policy add-role-to-user admin system:serviceaccount:demo-build:jenkins -n demo-test
 oc adm policy add-role-to-user admin system:serviceaccount:demo-build:jenkins -n demo-prod
-```
-
-Give rights on other environments to pull images from build environment :
-```
-oc adm policy add-role-to-group system:image-puller system:serviceaccounts:demo-test -n demo-build
-oc adm policy add-role-to-group system:image-puller system:serviceaccounts:demo-prod -n demo-build
 ```
 
 Tag the test image :
