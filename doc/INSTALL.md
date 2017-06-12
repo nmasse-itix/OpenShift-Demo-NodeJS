@@ -21,9 +21,10 @@ oc process -f setup/all-in-one-template.yaml > objects.json
 oc create -f objects.json
 ```
 
-Then, configure Jenkins [as described here](doc/CONFIGURE_JENKINS.md).
+Then, configure Jenkins [as described here](CONFIGURE_JENKINS.md).
 
 Where parameters are :
+
 | Parameter Name | Required ? | Default Value | Description |
 | --- | --- | --- | --- |
 | DEV_PROJECT | No | demo-dev | TODO |
@@ -31,6 +32,7 @@ Where parameters are :
 | TEST_PROJECT | No | demo-test | TODO |
 | PROD_PROJECT | No | demo-prod | TODO |
 
+TODO
 
 ## Manual Setup
 
@@ -143,4 +145,4 @@ oc set triggers dc/openshift-demo-nodejs-green --from-image=demo-build/openshift
 
 ### Create the Jenkins Pipeline
 
-Configure Jenkins [as described here](doc/CONFIGURE_JENKINS.md).
+Configure Jenkins [as described here](CONFIGURE_JENKINS.md).
