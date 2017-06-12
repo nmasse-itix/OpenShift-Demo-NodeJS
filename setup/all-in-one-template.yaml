@@ -450,22 +450,22 @@ objects:
 ## Template Parameters
 ##
 parameters:
-- description: The name of the OpenShift Projects to that holds the dev environment.
+- description: The name of the OpenShift Project to that holds the dev environment.
   displayName: Development Environment
   name: DEV_PROJECT
   value: xyz-dev
 
-- description: The name of the OpenShift Projects to that holds the build environment.
+- description: The name of the OpenShift Project to that holds the build environment.
   displayName: Build Environment
   name: BUILD_PROJECT
   value: xyz-build
 
-- description: The name of the OpenShift Projects to that holds the test environment.
+- description: The name of the OpenShift Project to that holds the test environment.
   displayName: Test Environment
   name: TEST_PROJECT
   value: xyz-test
 
-- description: The name of the OpenShift Projects to that holds the prod environment.
+- description: The name of the OpenShift Project to that holds the prod environment.
   displayName: Production Environment
   name: PROD_PROJECT
   value: xyz-prod
