@@ -20,6 +20,10 @@ Deploy a Jenkins in the BUILD project :
 oc new-app -n demo-build --template=jenkins-persistent --name=jenkins -p MEMORY_LIMIT=1Gi
 ```
 
+__Note :__ The `jenkins-persistent` Template requires you to provision a PersistentVolume.
+If there is no available PersistentVolume, the deployment will fail. In this case, have a look to
+my other project : the [OpenShift-Hostpath-Provisioner](https://github.com/nmasse-itix/OpenShift-HostPath-Provisioner).
+
 Create all other objects using the template :
 ```
 oc process -f setup/all-in-one-template.yaml > objects.json
@@ -69,6 +73,10 @@ Deploy a Jenkins in the build project :
 ```
 oc new-app -n demo-build --template=jenkins-persistent --name=jenkins -p MEMORY_LIMIT=1Gi
 ```
+
+__Note :__ The `jenkins-persistent` Template requires you to provision a PersistentVolume.
+If there is no available PersistentVolume, the deployment will fail. In this case, have a look to
+my other project : the [OpenShift-Hostpath-Provisioner](https://github.com/nmasse-itix/OpenShift-HostPath-Provisioner).
 
 Give admin role to the jenkins service account on subsequent environments :
 ```
