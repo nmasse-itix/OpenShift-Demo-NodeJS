@@ -26,6 +26,7 @@ objects:
   metadata:
     labels:
       build: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${BUILD_PROJECT}
 
@@ -35,6 +36,7 @@ objects:
   metadata:
     labels:
       build: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${TEST_PROJECT}
 
@@ -44,6 +46,7 @@ objects:
   metadata:
     labels:
       build: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${PROD_PROJECT}
 
@@ -58,6 +61,7 @@ objects:
     name: openshift-demo-nodejs
     labels:
       build: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     namespace: ${BUILD_PROJECT}
   spec:
     successfulBuildsHistoryLimit: 1
@@ -91,6 +95,8 @@ objects:
   metadata:
     name: "openshift-demo-nodejs-pipeline"
     namespace: ${BUILD_PROJECT}
+    labels:
+      template: openshift-demo-nodejs
   spec:
     source:
       git:
@@ -133,6 +139,7 @@ objects:
   metadata:
     labels:
       app: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${TEST_PROJECT}
   spec:
@@ -150,6 +157,7 @@ objects:
         labels:
           app: openshift-demo-nodejs
           deploymentconfig: openshift-demo-nodejs
+          template: openshift-demo-nodejs
       spec:
         containers:
         - image: openshift-demo-nodejs:ready-for-testing
@@ -182,6 +190,7 @@ objects:
   metadata:
     labels:
       app: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${TEST_PROJECT}
   spec:
@@ -205,6 +214,7 @@ objects:
       haproxy.router.openshift.io/disable_cookies: "true"
     labels:
       app: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${TEST_PROJECT}
   spec:
@@ -228,6 +238,8 @@ objects:
   metadata:
     name: jenkins-is-admin
     namespace: ${TEST_PROJECT}
+    labels:
+      template: openshift-demo-nodejs
   roleRef:
     name: admin
   subjects:
@@ -244,6 +256,8 @@ objects:
   metadata:
     name: jenkins-is-admin
     namespace: ${PROD_PROJECT}
+    labels:
+      template: openshift-demo-nodejs
   roleRef:
     name: admin
   subjects:
@@ -264,6 +278,7 @@ objects:
     labels:
       app: openshift-demo-nodejs-blue
       color: blue
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs-blue
     namespace: ${PROD_PROJECT}
   spec:
@@ -286,6 +301,7 @@ objects:
     labels:
       app: openshift-demo-nodejs-green
       color: green
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs-green
     namespace: ${PROD_PROJECT}
   spec:
@@ -307,6 +323,7 @@ objects:
   metadata:
     labels:
       app: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${PROD_PROJECT}
   spec:
@@ -329,6 +346,7 @@ objects:
       haproxy.router.openshift.io/disable_cookies: "true"
     labels:
       app: openshift-demo-nodejs
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs
     namespace: ${PROD_PROJECT}
   spec:
@@ -348,6 +366,7 @@ objects:
     labels:
       app: openshift-demo-nodejs-blue
       color: blue
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs-blue
     namespace: ${PROD_PROJECT}
   spec:
@@ -367,6 +386,7 @@ objects:
           app: openshift-demo-nodejs-blue
           color: blue
           deploymentconfig: openshift-demo-nodejs-blue
+          template: openshift-demo-nodejs
       spec:
         containers:
         - image: openshift-demo-nodejs:ready-for-prod
@@ -400,6 +420,7 @@ objects:
     labels:
       app: openshift-demo-nodejs-green
       color: green
+      template: openshift-demo-nodejs
     name: openshift-demo-nodejs-green
     namespace: ${PROD_PROJECT}
   spec:
@@ -419,6 +440,7 @@ objects:
           app: openshift-demo-nodejs-green
           color: green
           deploymentconfig: openshift-demo-nodejs-green
+          template: openshift-demo-nodejs
       spec:
         containers:
         - image: openshift-demo-nodejs:ready-for-prod
