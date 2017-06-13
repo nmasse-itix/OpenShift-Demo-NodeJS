@@ -4,7 +4,7 @@ var router = express.Router();
 var port = 8080;
 
 // See https://www.w3schools.com/cssref/css_colors.asp
-var color = "purple";
+var color = "gray";
 
 router.use(function (req,res,next) {
   next();
