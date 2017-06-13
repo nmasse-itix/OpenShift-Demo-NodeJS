@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Template
 labels:
   template: openshift-demo-nodejs
-message: TODO
+message: See https://github.com/nmasse-itix/OpenShift-Demo-NodeJS for more details.
 metadata:
   annotations:
     description: |-
-      TODO
-      NOTE: You must have persistent volumes available in your cluster to use this template.
+      A demo application that exhibits the main features of OpenShift. It is written
+      in NodeJS and features a CI/CD environment with Blue/Green deployment.
     openshift.io/display-name: OpenShift Demo NodeJS
     tags: instant-app,nodejs,jenkins
     template.openshift.io/documentation-url: https://github.com/nmasse-itix/OpenShift-Demo-NodeJS
@@ -475,22 +475,22 @@ parameters:
 - description: The name of the OpenShift Project to that holds the dev environment.
   displayName: Development Environment
   name: DEV_PROJECT
-  value: xyz-dev
+  value: demo-dev
 
 - description: The name of the OpenShift Project to that holds the build environment.
   displayName: Build Environment
   name: BUILD_PROJECT
-  value: xyz-build
+  value: demo-build
 
 - description: The name of the OpenShift Project to that holds the test environment.
   displayName: Test Environment
   name: TEST_PROJECT
-  value: xyz-test
+  value: demo-test
 
 - description: The name of the OpenShift Project to that holds the prod environment.
   displayName: Production Environment
   name: PROD_PROJECT
-  value: xyz-prod
+  value: demo-prod
 
 - description: The GIT repository to use.
   displayName: GIT Repo URL
