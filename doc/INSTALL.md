@@ -26,13 +26,19 @@ my other project : the [OpenShift-Hostpath-Provisioner](https://github.com/nmass
 
 Create all other objects using the template :
 ```
-oc process -f setup/all-in-one-template.yaml > objects.json
+oc process -f setup/all-in-one-template.yaml TEST_ROUTE_HOSTNAME=demo.test.app.openshift.test PROD_ROUTE_HOSTNAME=demo.prod.app.openshift.test NPM_EMAIL=your@npm.email > objects.json
 oc create -f objects.json
 ```
 
-Then, configure Jenkins [as described here](CONFIGURE_JENKINS.md).
+__Notes :__
+ - Keep the `objects.json` in a safe place since you will need it to cleanup the
+   platform (`oc delete -f objects.json`).
+ - Replace the `demo.test.app.openshift.test` and `demo.prod.app.openshift.test`
+   by meaningful values for your environment. It will be your routes in
+   TEST and PROD environments.
+ - Replace `your@npm.email` by the email address associated with your NPM Account.
 
-Where parameters are :
+All parameters are documented here :
 
 | Parameter Name | Required ? | Default Value | Description |
 | --- | --- | --- | --- |
@@ -48,6 +54,8 @@ Where parameters are :
 | BUILD_PROJECT | No | demo-build | The name of the OpenShift Project to that holds the build environment |
 | TEST_PROJECT | No | demo-test | The name of the OpenShift Project to that holds the test environment |
 | PROD_PROJECT | No | demo-prod | The name of the OpenShift Project to that holds the prod environment |
+
+**Then, configure Jenkins [as described here](CONFIGURE_JENKINS.md).**
 
 ## Manual Setup
 
@@ -154,4 +162,4 @@ oc set triggers dc/openshift-demo-nodejs-blue --from-image=demo-build/openshift-
 oc set triggers dc/openshift-demo-nodejs-green --from-image=demo-build/openshift-demo-nodejs:ready-for-prod --manual=true -c openshift-demo-nodejs-green -n demo-prod
 ```
 
-Then, configure Jenkins [as described here](CONFIGURE_JENKINS.md).
+**Then, configure Jenkins [as described here](CONFIGURE_JENKINS.md).**

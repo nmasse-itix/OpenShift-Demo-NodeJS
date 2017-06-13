@@ -33,18 +33,18 @@ Quick reminder to install a plugin :
  5. Search for the plugin to install
  6. Check the box next to the plugin to install
  7. Click `Download now and install after restart`
- 8. Do not forget to check the box `Restart Jenkins`
+ 8. Do not forget to check the box `Restart Jenkins when installation is complete and no jobs are running`
 
-Note: to update a plugin, select the `Updates` tab instead of the `Available` tab.
+__Note :__ to update a plugin, select the `Updates` tab instead of the `Available` tab.
 
-## Create the Jenkins Pipeline
+## Create/Update the Jenkins Pipeline
 
 Depending if you created a JenkinsPipeline BuildConfig, OpenShift may have created
 a Jenkins pipeline for you. In such a case, the Jenkins Pipeline is named `<namespace>/<buildconfig-name>`.
 
 So, if you installed the demo :
  - manually, you need to create the pipeline from scratch
- - automatically, you need to update the pipeline to add the following parameters
+ - automatically with the provided template, you need to update the pipeline to add the following parameters
 
 __Note :__ As of today, OpenShift does not accept build environment variables with Jenkins pipelines.
 So you have to update the Jenkins pipeline created by OpenShift to add those variable.

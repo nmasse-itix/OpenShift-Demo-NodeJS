@@ -1,5 +1,35 @@
 # Demo Scenario
 
+## Preparation
+
+If you plan to deliver this demo, you will need :
+ - a GitHub Account
+ - an NPM Account
+
+You will then need to clone this repo and edit `package.json` to change :
+ - the package name
+ - the package version
+
+__Note :__ You will have to change the package version each time you reset Jenkins
+since the build number is used in the NPM package version and the version numbers
+in NPM can only go up, never down.
+
+## Modify the app
+
+To run the following scenarios, you will have to modify the app to have a different color.
+Here is how to do so.
+
+Main steps :
+ - Edit `server.js` and modify line 7 (`var color = ...`) to have a different color.
+ - You can find nice colors [here](https://www.w3schools.com/cssref/css_colors.asp)
+ - Run the following commands :
+
+```
+git add server.js
+git commit -m 'improve look and feel'
+git push
+```
+
 ## Deploy in the DEV environment
 
 In this scenario, we are a developer joining an existing team. This developer
@@ -53,20 +83,4 @@ $ curl http://route.to.test.app/info
 
 $ curl http://route.to.test.app/info
 {"color":"purple","podName":"openshift-demo-nodejs-2-nsbv6"}
-```
-
-## How to modify the app
-
-To run the previous scenarios, you will have to modify the app to have a different color.
-Here is how to do so.
-
-Main steps :
- - Edit `server.js` and modify line 7 (`var color = ...`) to have a different color.
- - You can find nice colors [here](https://www.w3schools.com/cssref/css_colors.asp)
- - Run the following commands :
-
-```
-git add server.js
-git commit -m 'improve look and feel'
-git push
 ```
