@@ -108,10 +108,6 @@ objects:
         env:
           - name: NPM_CREDENTIALS_ID
             value: ${NPM_CREDENTIALS_ID}
-          - name: NPM_EMAIL
-            value: ${NPM_EMAIL}
-          - name: NPM_REGISTRY
-            value: ${NPM_REGISTRY}
           - name: OPENSHIFT_IMAGE_STREAM
             value: openshift-demo-nodejs
           - name: OPENSHIFT_BUILD_CONFIG
@@ -507,20 +503,10 @@ parameters:
   name: NODEJS_IMAGE_STREAM_TAG
   value: nodejs:latest
 
-- description: The Jenkins Credentials ID that holds login and password to login on NPM Registry
+- description: The Jenkins Credentials ID that holds the token to login on NPM Registry
   displayName: Jenkins Credentials ID for NPM Registry
   name: NPM_CREDENTIALS_ID
   value: npm-secret
-
-- description: The email address associated with the NPM Account pointed by NPM_CREDENTIALS_ID
-  displayName: Email address of your NPM Account
-  name: NPM_EMAIL
-  required: true
-
-- description: Private NPM registry to log in to
-  displayName: NPM Registry URL
-  name: NPM_REGISTRY
-  value: https://registry.npmjs.org
 
 - description: The route to create in the TEST environment and which we will use to run the integration tests
   displayName: Application Hostname in the TEST environment
