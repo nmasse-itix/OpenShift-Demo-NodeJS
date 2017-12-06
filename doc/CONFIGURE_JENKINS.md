@@ -1,12 +1,28 @@
 # Configure Jenkins
 
+## Login to NPM and generate a token
+
+Log in the NPM registry with:
+```
+npm login
+```
+
+And create a new read/write token:
+```
+npm token create
+```
+
+Keep the generated token in a safe place !
+
+See [the NPM documentation](https://docs.npmjs.com/getting-started/working_with_tokens) for more information.
+
 ## Create a credential named `npm-secret`
 
 Login to Jenkins with your OpenShift credentials and create a Jenkins credential with the following parameters :
  - Scope: global
  - Kind: Username with password
- - Username: \<your NPM username\>
- - Password: \<your NPM password\>
+ - Username: `npm-secret` (or anything else, only the password is used)
+ - Password: \<the token generated previously\>
  - ID: npm-secret
 
 To create a Jenkins Credentials :
@@ -37,29 +53,18 @@ Quick reminder to install a plugin :
 
 __Note :__ to update a plugin, select the `Updates` tab instead of the `Available` tab.
 
-## Create/Update the Jenkins Pipeline
+## Create the Jenkins Pipeline (Manual Install ONLY)
 
 Depending if you created a JenkinsPipeline BuildConfig, OpenShift may have created
-a Jenkins pipeline for you. In such a case, the Jenkins Pipeline is named `<namespace>/<buildconfig-name>`.
+a Jenkins pipeline for you. In such a case, the Jenkins Pipeline is named `<namespace>/<buildconfig-name>`
+and you have nothing more to do.
 
-So, if you installed the demo :
- - manually, you need to create the pipeline from scratch
- - automatically with the provided template, you need to update the pipeline to add the following parameters
-
-__Note :__ As of today, OpenShift does not accept build environment variables with Jenkins pipelines.
-So you have to update the Jenkins pipeline created by OpenShift to add those variable.
-In the next version this may change as there is a pull request for this feature
-(see [\#11293](https://github.com/openshift/origin/issues/11293)
-and [\#12323](https://github.com/openshift/origin/pull/12323)).
-
-So, create a Jenkins Pipeline that accepts the following parameters or update
-the existing Jenkins Pipeline so that it accepts the following parameters :
+Whereas if you installed the demo manually, you need to create the pipeline from scratch.
+If this is the case, create a Jenkins Pipeline that accepts the following parameters :
 
 | Parameter Name | Parameter Type | Default Value | Description |
 | --- | --- | --- | --- |
-| NPM_CREDENTIALS_ID | String | npm-secret | The Jenkins Credentials ID that holds login and password to login on NPM Registry |
-| NPM_EMAIL | String | \<your NPM email\> | The email address associated with the NPM Account pointed by NPM_CREDENTIALS_ID |
-| NPM_REGISTRY | String | https://registry.npmjs.org | Private NPM registry to log in to (Default if not provided: https://registry.npmjs.org) |
+| NPM_CREDENTIALS_ID | String | npm-secret | The Jenkins Credentials ID that holds the token to login on NPM Registry |
 | OPENSHIFT_IMAGE_STREAM | String | openshift-demo-nodejs | The ImageStream name to use to tag the built images |
 | OPENSHIFT_BUILD_CONFIG | String | openshift-demo-nodejs | The BuildConfig name to use |
 | OPENSHIFT_SERVICE | String | openshift-demo-nodejs | The Service object to update (either green or blue) |
