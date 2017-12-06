@@ -26,7 +26,7 @@ my other project : the [OpenShift-Hostpath-Provisioner](https://github.com/nmass
 
 Create all other objects using the template :
 ```
-oc process -f setup/all-in-one-template.yaml TEST_ROUTE_HOSTNAME=demo.test.app.openshift.test PROD_ROUTE_HOSTNAME=demo.prod.app.openshift.test NPM_EMAIL=your@npm.email > objects.json
+oc process -f setup/all-in-one-template.yaml TEST_ROUTE_HOSTNAME=demo.test.app.openshift.test PROD_ROUTE_HOSTNAME=demo.prod.app.openshift.test > objects.json
 oc create -f objects.json
 ```
 
@@ -36,7 +36,6 @@ __Notes :__
  - Replace the `demo.test.app.openshift.test` and `demo.prod.app.openshift.test`
    by meaningful values for your environment. It will be your routes in
    TEST and PROD environments.
- - Replace `your@npm.email` by the email address associated with your NPM Account.
 
 All parameters are documented here :
 
@@ -44,9 +43,7 @@ All parameters are documented here :
 | --- | --- | --- | --- |
 | TEST_ROUTE_HOSTNAME | Yes | - | The route to create in the TEST environment and which we will use to run the integration tests |
 | PROD_ROUTE_HOSTNAME | Yes | - | The route to create in the PROD environment |
-| NPM_EMAIL | Yes | - | Email address of your NPM Account |
-| NPM_CREDENTIALS_ID | No | npm-secret | The Jenkins Credentials ID that holds login and password to login on NPM Registry |
-| NPM_REGISTRY | No | https://registry.npmjs.org | Private NPM registry to log in to |
+| NPM_CREDENTIALS_ID | No | npm-secret | The Jenkins Credentials ID that holds the token to login on NPM Registry |
 | GIT_REPO | No | https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git | The GIT repository to use. This will be useful if you clone this repo. |
 | NODEJS_IMAGE_STREAM_TAG | No | nodejs:latest | Name of the ImageStreamTag to be used for the NodeJS image. Change this if you plan to use your own NodeJS S2I image. |
 | NODEJS_IMAGE_STREAM_NAMESPACE | No | openshift | The OpenShift Namespace where the NodeJS ImageStream resides. |

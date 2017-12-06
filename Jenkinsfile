@@ -5,9 +5,8 @@
  *  - Credentials Binding (https://plugins.jenkins.io/credentials-binding)
  *
  * This pipeline accepts the following parameters :
- *  - NPM_CREDENTIALS_ID: The Jenkins Credentials ID that holds login and password to login on NPM Registry
- *  - NPM_EMAIL: The email address associated with the NPM Account pointed by NPM_CREDENTIALS_ID
- *  - NPM_REGISTRY: Private NPM registry to log in to (Default if not provided: https://registry.npmjs.org)
+ *  - NPM_CREDENTIALS_ID: The Jenkins Credentials ID that holds the NPM token to login on NPM Registry
+ *  - NPM_TAG: The tag to use to publish the package to the NPM registry (defaults to 'latest')
  *  - OPENSHIFT_IMAGE_STREAM: The ImageStream name to use to tag the built images
  *  - OPENSHIFT_BUILD_CONFIG: The BuildConfig name to use
  *  - OPENSHIFT_SERVICE: The Service object to update (either green or blue)
@@ -33,32 +32,28 @@ node('nodejs') {
   def newVersion = "$currentVersion-$BUILD_NUMBER"
   def packageName = thisPackage.name
   def packageSpec = "$packageName@$newVersion"
-
-  // You will need the "credential binding" plugin. See here how to install it :
-  // https://support.cloudbees.com/hc/en-us/articles/203802500-Injecting-Secrets-into-Jenkins-Build-Jobs
-  withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.NPM_CREDENTIALS_ID,
-                    usernameVariable: 'NPM_USER', passwordVariable: 'NPM_PASS']]) {
-      stage("Login to NPM") {
-        echo "Using NPM CredentialsID = '${params.NPM_CREDENTIALS_ID}'"
-        echo "About to login on NPM with ${env.NPM_USER}/${params.NPM_EMAIL}"
-        sh '''
-        set +x
-        npm install -g npm-cli-login publish
-        npm-cli-login
-        '''
-      }
-  }
+  def packageTag = (params.NPM_TAG != null && params.NPM_TAG != "") ? params.NPM_TAG : 'latest'
 
   // Run the unit tests
   stage('Unit Tests') {
     sh "npm test"
   }
 
-  // Package the app and publish it to NPM
-  stage('Package and Publish to NPM') {
-    echo "Will publish version $newVersion to NPM"
-    sh "npm version --no-git-tag-version $newVersion"
-    sh "publish"
+  // You will need the "credential binding" plugin. See here how to install it :
+  // https://support.cloudbees.com/hc/en-us/articles/203802500-Injecting-Secrets-into-Jenkins-Build-Jobs
+  withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.NPM_CREDENTIALS_ID,
+                    usernameVariable: 'DUMMY', passwordVariable: 'NPM_TOKEN']]) {
+    // Package the app and publish it to NPM
+    stage('Package and Publish to NPM') {
+      echo "Using NPM CredentialsID = '${params.NPM_CREDENTIALS_ID}'"
+
+      // Store the NPM Token in the config file
+      sh "npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}"
+
+      echo "Will publish version $newVersion to NPM (tagged as 'latest')"
+      sh "npm --no-git-tag-version version ${newVersion}"
+      sh "npm publish --tag ${packageTag}"
+    }
   }
 
   // Build the OpenShift Image in OpenShift using the artifacts from NPM
