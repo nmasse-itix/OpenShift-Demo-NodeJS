@@ -1,6 +1,6 @@
 {
   "name": "openshift-demo-nodejs-nmasse",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "An OpenShift Demo app running on NodeJS",
   "main": "server.js",
   "scripts": {
