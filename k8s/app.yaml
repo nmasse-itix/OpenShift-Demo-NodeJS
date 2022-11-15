@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openshift-demo-nodejs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: openshift-demo-nodejs
+  template:
+    metadata:
+      labels:
+        name: openshift-demo-nodejs
+    spec:
+      containers:
+      - name: openshift-demo-nodejs
+        image: quay.io/nmasse_itix/openshift-demo-nodejs
+        ports:
+        - containerPort: 8080
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openshift-demo-nodejs
+spec:
+  type: ClusterIP
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    name: openshift-demo-nodejs
+  sessionAffinity: None
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: openshift-demo-nodejs
+spec:
+  to:
+    kind: Service
+    name: openshift-demo-nodejs
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None
