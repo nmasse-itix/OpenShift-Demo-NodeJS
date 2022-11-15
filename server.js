@@ -47,7 +47,7 @@ router.get("/info",function(req,res){
   if (!ready) {
     response.color = "red";
     response.podName = "NOT READY";
-    status = 503;
+    status = 500;
   } else {
     counter.inc();
   }
@@ -75,7 +75,7 @@ router.get("/health/ready",function(req,res){
     .send({"alive": true})
     .end();
   } else {
-    res.status(503).send("Not ready");
+    res.status(500).send("Not ready");
   }
 });
 
