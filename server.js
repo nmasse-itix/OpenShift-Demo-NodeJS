@@ -4,7 +4,7 @@ var router = express.Router();
 var port = 8080;
 
 // See https://www.w3schools.com/cssref/css_colors.asp
-var color = "red";
+var color = "green";
 var ready = false;
 
 router.use(function (req,res,next) {
@@ -21,6 +21,10 @@ router.get("/info",function(req,res){
     color: color,
     podName: process.env["HOSTNAME"],
   };
+  if (!ready) {
+    response.color = "red";
+    response.podName = "NOT READY";
+  }
   res.type('application/json')
      .header("Connection", "close")
      .header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
