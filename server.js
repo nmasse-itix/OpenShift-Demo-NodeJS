@@ -36,6 +36,14 @@ app.use("*",function(req,res){
   res.status(404).send("Not found");
 });
 
-app.listen(port,function(){
-  console.log("Live at Port %i", port);
-});
+console.log("Starting up...");
+
+setTimeout(function(){
+  app.listen(port,function(){
+    console.log("Live at Port %i", port);
+  });
+}, 10000);
+
+//app.listen(port,function(){
+//  console.log("Live at Port %i", port);
+//});
