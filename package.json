@@ -10,6 +10,8 @@
   "repository": "https://github.com/nmasse-itix/OpenShift-Demo-NodeJS.git",
   "license": "MIT",
   "dependencies": {
-    "express": "latest"
+    "express": "latest",
+    "express-prom-bundle": "^6.5.0",
+    "prom-client": "^14.1.0"
   }
 }
