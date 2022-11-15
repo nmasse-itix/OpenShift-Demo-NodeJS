@@ -4,6 +4,7 @@ var express = require("express");
 var app = express();
 var router = express.Router();
 var port = 8080;
+var server = null;
 
 // See https://www.w3schools.com/cssref/css_colors.asp
 var color = "green";
@@ -79,24 +80,24 @@ router.get("/health/ready",function(req,res){
   }
 });
 
+router.get("/kaboom",function(req,res){
+  res.type('text/plain')
+     .send("GO AWAY !")
+     .end();
+  server.close();
+});
+
 app.use("/",router);
 
 app.use("*",function(req,res){
   res.status(404).send("Not found");
 });
 
-console.log("Starting up...");
-
-setTimeout(function(){
-  app.listen(port,function(){
-    console.log("Live at Port %i", port);
-  });
-}, 15000);
-
 setTimeout(function(){
   ready = true;
-}, 30000);
+}, 15000);
 
-//app.listen(port,function(){
-//  console.log("Live at Port %i", port);
-//});
+server = app.listen(port,function(){
+  console.log("Live at Port %i", port);
+});
+
