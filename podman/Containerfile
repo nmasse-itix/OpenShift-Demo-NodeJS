@@ -1,0 +1,7 @@
+FROM docker.io/library/node:14-alpine
+ADD server.js /src/server.js
+ADD package.json /src/package.json
+WORKDIR /src
+RUN npm install
+EXPOSE 8080
+CMD [ "/src/server.js" ]
