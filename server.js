@@ -5,6 +5,7 @@ var port = 8080;
 
 // See https://www.w3schools.com/cssref/css_colors.asp
 var color = "red";
+var ready = false;
 
 router.use(function (req,res,next) {
   next();
@@ -29,6 +30,21 @@ router.get("/info",function(req,res){
      .end();
 });
 
+router.get("/health/live",function(req,res){
+  res.type('application/json')
+     .send({"alive": true})
+     .end();
+});
+
+router.get("/health/ready",function(req,res){
+  if (ready) {
+    res.type('application/json')
+    .send({"alive": true})
+    .end();
+  } else {
+    res.status(503).send("Not ready");
+  }
+});
 
 app.use("/",router);
 
@@ -42,7 +58,11 @@ setTimeout(function(){
   app.listen(port,function(){
     console.log("Live at Port %i", port);
   });
-}, 10000);
+}, 15000);
+
+setTimeout(function(){
+  ready = true;
+}, 30000);
 
 //app.listen(port,function(){
 //  console.log("Live at Port %i", port);
